@@ -25,16 +25,19 @@ for message in messages:
     subject = message.Subject
     body = message.body
     attachments = message.Attachments
+    sender = message.Sender.Address
 
     # Create separate folder for each message, exclude special characters and timestampe
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    target_folder = output_dir / re.sub('[^0-9a-zA-Z]+', '', subject) / current_time
+    # target_folder = output_dir / re.sub('[^0-9a-zA-Z]+', '', subject) / current_time
+    target_folder = output_dir / re.sub('[^0-9a-zA-Z]+', '', sender)
     target_folder.mkdir(parents=True, exist_ok=True)
 
     # Write body to text file
-    Path(target_folder / "EMAIL_BODY.txt").write_text(str(body))
+    # Path(target_folder / "EMAIL_BODY.txt").write_text(str(body))
 
     # Save attachments and exclude special
     for attachment in attachments:
         filename = re.sub('[^0-9a-zA-Z\.]+', '', attachment.FileName)
-        attachment.SaveAsFile(target_folder / filename)
+        if filename.endswith("pdf"):
+            attachment.SaveAsFile(target_folder / filename)
